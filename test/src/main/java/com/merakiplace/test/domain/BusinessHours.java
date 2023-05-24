@@ -17,6 +17,10 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 /**
  *packageName    : com.merakiplace.test.domain
  * fileName       : BusinessHours
@@ -30,6 +34,8 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class BusinessHours {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,11 +62,18 @@ public class BusinessHours {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Doctor doctor;
 
-	public Doctor getDoctor() {
-		return doctor;
+	public void setDoctor(Doctor doctor) {
+		this.doctor = doctor;
 	}
 
-	public void setDoctor(Doctor doctor) {
+	@Builder(toBuilder = true)
+	public BusinessHours(Days days, Time openingTime, Time closingTime, Time lunchStartTime,
+		Time lunchEndTime, Doctor doctor) {
+		this.days = days;
+		this.openingTime = openingTime;
+		this.closingTime = closingTime;
+		this.lunchStartTime = lunchStartTime;
+		this.lunchEndTime = lunchEndTime;
 		this.doctor = doctor;
 	}
 }

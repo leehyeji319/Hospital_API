@@ -16,6 +16,10 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 /**
  *packageName    : com.merakiplace.test.domain
  * fileName       : Hospital
@@ -29,6 +33,8 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 
 @Entity
+@Getter
+// @NoArgsConstructor
 public class Hospital {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,14 +44,22 @@ public class Hospital {
 	@Column
 	private String hospitalName;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "hospital")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Doctor> doctors = new ArrayList<>();
+
+	public Hospital() {
+
+	}
 
 	public void addDoctor(Doctor doctor) {
 		doctor.setHospital(doctor.getHospital());
 		doctors.add(doctor);
 	}
 
-
+	@Builder(toBuilder = true)
+	public Hospital(String hospitalName) {
+		this.hospitalName = hospitalName;
+	}
 }

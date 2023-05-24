@@ -12,6 +12,10 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 /**
  *packageName    : com.merakiplace.test.domain
  * fileName       : DoctorDepartment
@@ -25,6 +29,8 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class DoctorDepartment {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,4 +47,9 @@ public class DoctorDepartment {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Department department;
 
+	@Builder(toBuilder = true)
+	public DoctorDepartment(Doctor doctor, Department department) {
+		this.doctor = doctor;
+		this.department = department;
+	}
 }

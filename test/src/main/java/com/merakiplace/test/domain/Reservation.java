@@ -15,6 +15,10 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 /**
  *packageName    : com.merakiplace.test.domain
  * fileName       : Reservation
@@ -28,6 +32,8 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class Reservation {
 
 	@Id @GeneratedValue
@@ -52,5 +58,19 @@ public class Reservation {
 	private LocalDateTime reservationDateTime;
 
 	@Column
+	private LocalDateTime expiredDateTime;
+
+	@Column
 	private String redisHashId;
+
+	@Builder(toBuilder = true)
+	public Reservation(Patient patient, Doctor doctor, Status status, LocalDateTime reservationDateTime,
+		LocalDateTime expiredDateTime, String redisHashId) {
+		this.patient = patient;
+		this.doctor = doctor;
+		this.status = status;
+		this.reservationDateTime = reservationDateTime;
+		this.expiredDateTime = expiredDateTime;
+		this.redisHashId = redisHashId;
+	}
 }

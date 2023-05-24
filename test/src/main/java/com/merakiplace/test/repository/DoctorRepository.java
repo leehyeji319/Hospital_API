@@ -1,5 +1,7 @@
 package com.merakiplace.test.repository;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.merakiplace.test.domain.Days;
 import com.merakiplace.test.domain.Doctor;
-import com.merakiplace.test.dto.DoctorTimeAndDateDto;
 
 /**
  *packageName    : com.merakiplace.test.repository
@@ -70,5 +72,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 		, nativeQuery = true)
 	List<String> findLunchTimeDoctorTimeAndDay(@Param("time") String time, @Param("day") String day);
 
+
+	//해당 요일과 의사의 ID로 점심시간 언제끝나는지 가져오기
+	@Query("select bh.lunchEndTime from BusinessHours bh where bh.doctor.id = :doctorId and bh.days = :days")
+	Time findLunchEndTimeByIdAndDays(@Param("doctorId") long doctorId, @Param("day") String day);
+
+	// void existByIdAndDay(long doctorId, String targetDayOfWeek);
 
 }

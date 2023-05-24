@@ -6,6 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 /**
  *packageName    : com.merakiplace.test.domain
  * fileName       : Patient
@@ -19,6 +23,8 @@ import javax.persistence.Id;
  */
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class Patient {
 
 	@Id
@@ -29,4 +35,8 @@ public class Patient {
 	@Column
 	private String name;
 
+	@Builder(toBuilder = true)
+	public Patient(String name) {
+		this.name = name;
+	}
 }
