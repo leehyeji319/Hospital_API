@@ -1,12 +1,20 @@
-create database merakiplace;
+use merakiplaceS;
 
-use merakiplace;
+-- select * from department;
+-- select * from business_hours;
+-- select * from hospital;
+-- select * from doctor;
+-- select * from doctor_department;
+-- select * from patient;
 
-select * from department;
-select * from business_hours;
-select * from hospital;
-select * from doctor;
-select * from doctor_department;
+-- 환자 정보 dummy date insert
+insert into patient(name) values ('강주영');
+insert into patient(name) values ('이민우');
+insert into patient(name) values ('오종석');
+insert into patient(name) values ('변준우');
+insert into patient(name) values ('최지연');
+insert into patient(name) values ('황수정');
+insert into patient(name) values ('고진석');
 
 -- 진료 과목 dummy data insert
 insert into department(department_name) values ('정형외과');

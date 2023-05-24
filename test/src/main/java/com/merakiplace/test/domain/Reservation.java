@@ -60,18 +60,14 @@ public class Reservation {
 	@Column
 	private LocalDateTime expiredDateTime;
 
-	@Column
-	private String redisHashId;
-
 	@Builder(toBuilder = true)
 	public Reservation(long id, Patient patient, Doctor doctor, Status status, LocalDateTime reservationDateTime,
-		LocalDateTime expiredDateTime, String redisHashId) {
+		LocalDateTime expiredDateTime) {
 		this.id = id;
 		this.patient = patient;
 		this.doctor = doctor;
 		this.status = status;
 		this.reservationDateTime = reservationDateTime;
 		this.expiredDateTime = expiredDateTime;
-		this.redisHashId = redisHashId;
 	}
 }

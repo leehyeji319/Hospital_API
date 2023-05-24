@@ -67,6 +67,9 @@ public class SearchService {
 		}
 
 		// 의사별로 가장 많이 등장한 횟수가 몇번인지
+		if (countDoctorMap.size() == 0) {
+			throw new IllegalArgumentException("검색어에 일치하는 의사가 존재하지 않습니다. 검색어 : " + keyword);
+		}
 		int maxAppearCount = Collections.max(countDoctorMap.values());
 
 		// 가장많이 등장한 횟수와 같은 등장횟수를 가진 의사들
