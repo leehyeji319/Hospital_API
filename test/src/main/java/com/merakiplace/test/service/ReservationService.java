@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,8 @@ import com.merakiplace.test.domain.Doctor;
 import com.merakiplace.test.domain.Patient;
 import com.merakiplace.test.domain.Reservation;
 import com.merakiplace.test.domain.Status;
-import com.merakiplace.test.dto.ReservationSaveResponseDto;
+import com.merakiplace.test.dto.ReservationInformationRequestDto;
+import com.merakiplace.test.dto.ReservationSearchRequestDto;
 import com.merakiplace.test.repository.BusinessHoursRepository;
 import com.merakiplace.test.repository.DoctorRepository;
 import com.merakiplace.test.repository.PatientRepository;
@@ -51,7 +51,7 @@ public class ReservationService {
 
 	//진료 요청
 	@Transactional
-	public ReservationSaveResponseDto addReservation(long doctorId, long patientId, String date, String time) {
+	public ReservationInformationRequestDto addReservation(long doctorId, long patientId, String date, String time) {
 
 		Doctor findDoctor = doctorRepository.findById(doctorId).orElseThrow(
 			() -> new IllegalArgumentException("해당 ID의 의사가 존재하지 않습니다. doctorId : " + doctorId));
@@ -136,7 +136,8 @@ public class ReservationService {
 					boolean existsDayOfWeek = false;
 					System.out.println(Days.valueOf(findDayOfWeek.toString().substring(0, 3)));
 					BusinessHours findBusinessHours =
-						businessHoursRepository.findByDaysAndDoctorId(Days.valueOf(findDayOfWeek.toString().substring(0, 3)), doctorId)
+						businessHoursRepository.findByDaysAndDoctorId(
+								Days.valueOf(findDayOfWeek.toString().substring(0, 3)), doctorId)
 							.orElseThrow(() -> new IllegalArgumentException("해당 요일과 의사의 ID와 일치하는 것이 없습니다."));
 
 					if (findBusinessHours.getOpeningTime() != null) {
@@ -148,15 +149,13 @@ public class ReservationService {
 							Days.valueOf(findDayOfWeek.toString().substring(0, 3)), doctorId);
 						LocalTime plusTime = openingTimeByDaysAndDoctorId.toLocalTime().plusMinutes(15);
 						String plusTimeToString = plusTime.format(timeFormatterWithHourMinute);
-
-						// LocalDateTime plusDate = LocalDateTime.parse(requestDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 						LocalDateTime newDate = requestDateTime.plusDays(countDay);
 						String plusDateToString = newDate.format(dateFormatterWithYearMonthDay);
 						String plusFullDateString = plusDateToString + " " + plusTimeToString;
 						expiredRequestDateTime = LocalDateTime.parse(plusFullDateString, formatter);
 						flag = false;
 					}
-					countDay ++;
+					countDay++;
 					findDayOfWeek = findDayOfWeek.plus(1);
 
 				}
@@ -171,25 +170,60 @@ public class ReservationService {
 			.status(Status.NONE)
 			.build());
 
-		ReservationSaveResponseDto responseDto = new ReservationSaveResponseDto();
-		responseDto.setReservationId(savedReservation.getId());
-		responseDto.setDoctorName(savedReservation.getDoctor().getDoctorName());
-		responseDto.setPatientName(savedReservation.getPatient().getName());
-		responseDto.setHopeReservationDateTime(savedReservation.getReservationDateTime());
-		responseDto.setExpiredReservationDateTime(savedReservation.getExpiredDateTime());
-
-		return responseDto;
+		return addReservationInformationDto(savedReservation);
 	}
 
 	//진료 요청 검색
-	public Object findReservationByDoctorId(long doctorId) {
+	public List<ReservationSearchRequestDto> findReservationByDoctorId(long doctorId) {
+		return reservationRepository.findByDoctorId(doctorId);
 
-		return null;
 	}
 
 	//진료 수락
+	@Transactional
 	public Object modifyReservationBeApprove(long reservationId) {
-		return null;
+		String message = "";
+		//진료 수락을 누른 시간
+		LocalDateTime approveRequestTime = LocalDateTime.now();
+
+		Reservation findReservation = reservationRepository.findById(reservationId)
+			.orElseThrow(() -> new IllegalArgumentException
+				("해당 예약의 아이디가 존재하지 않습니다. reservationId : " + reservationId));
+		LocalDateTime expiredDateTime = findReservation.getExpiredDateTime();
+
+		if (approveRequestTime.isAfter(expiredDateTime)) {
+			reservationRepository.save(
+				findReservation.toBuilder()
+					.id(findReservation.getId())
+					.status(Status.EXPIRED)
+					.build()
+			);
+		} else {
+			if (findReservation.getStatus().equals(Status.APPROVED)) {
+				throw new IllegalArgumentException("이미 진료 요청이 수락된 예약입니다. reservationId : " + reservationId);
+			}
+			Reservation modifiedReservation = reservationRepository.save(
+				findReservation.toBuilder()
+					.id(findReservation.getId())
+					.status(Status.APPROVED)
+					.build()
+			);
+
+			return addReservationInformationDto(modifiedReservation);
+		}
+		return message = "이미 진료 요청 시간이 초과되었습니다. 진료 요청 시간 : " + approveRequestTime
+			+ " " + "진료 요청 만료 시간 : " + findReservation.getExpiredDateTime();
+	}
+
+	private ReservationInformationRequestDto addReservationInformationDto(Reservation savedReservation) {
+		ReservationInformationRequestDto responseDto = new ReservationInformationRequestDto();
+		responseDto.setReservationId(savedReservation.getId());
+		responseDto.setDoctorName(savedReservation.getDoctor().getDoctorName());
+		responseDto.setPatientName(savedReservation.getPatient().getName());
+		responseDto.setTargetReservationDateTime(savedReservation.getReservationDateTime());
+		responseDto.setExpiredReservationApprovedDateTime(savedReservation.getExpiredDateTime());
+
+		return responseDto;
 	}
 
 }

@@ -2,14 +2,14 @@ package com.merakiplace.test.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.Builder;
+import com.merakiplace.test.domain.Status;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 /**
  *packageName    : com.merakiplace.test.dto
- * fileName       : ReservationSaveResponseDto
+ * fileName       : ReservationSearchRequestDto
  * author         : modsiw
  * date           : 2023/05/24
  * description    :
@@ -21,22 +21,21 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class ReservationSaveResponseDto {
+public class ReservationSearchRequestDto {
 
 	private long reservationId;
 	private String patientName;
-	private String doctorName;
-	private LocalDateTime hopeReservationDateTime;
-	private LocalDateTime expiredReservationDateTime;
+	private LocalDateTime targetReservationDateTime;
+	private LocalDateTime expiredReservationApprovedDateTime;
+	private Status status;
 
-
-	public ReservationSaveResponseDto(long reservationId, String patientName, String doctorName,
-		LocalDateTime hopeReservationDateTime, LocalDateTime expiredReservationDateTime) {
+	public ReservationSearchRequestDto(long reservationId, String patientName,
+		LocalDateTime targetReservationDateTime, LocalDateTime expiredReservationApprovedDateTime,
+		Status status) {
 		this.reservationId = reservationId;
 		this.patientName = patientName;
-		this.doctorName = doctorName;
-		this.hopeReservationDateTime = hopeReservationDateTime;
-		this.expiredReservationDateTime = expiredReservationDateTime;
+		this.targetReservationDateTime = targetReservationDateTime;
+		this.expiredReservationApprovedDateTime = expiredReservationApprovedDateTime;
+		this.status = status;
 	}
-
 }

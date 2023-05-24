@@ -64,8 +64,9 @@ public class Reservation {
 	private String redisHashId;
 
 	@Builder(toBuilder = true)
-	public Reservation(Patient patient, Doctor doctor, Status status, LocalDateTime reservationDateTime,
+	public Reservation(long id, Patient patient, Doctor doctor, Status status, LocalDateTime reservationDateTime,
 		LocalDateTime expiredDateTime, String redisHashId) {
+		this.id = id;
 		this.patient = patient;
 		this.doctor = doctor;
 		this.status = status;
