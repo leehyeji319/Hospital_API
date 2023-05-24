@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+  servlet:
+    context-path: /
+    encoding:
+      charset: utf-8
+      enabled: true
+
+spring:
+  datasource:
+    #    local
+       url: jdbc:mysql://localhost:3306/merakiplace?useUnicode=true&characterEncoding=utf-8
+       username: ssafy
+       password: ssafy
+       driver-class-name: com.mysql.cj.jdbc.Driver
+
+  output.ansi.enabled: always
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Seoul
+
+#  redis:
+#    host: 172.17.0.1
+#    port: 6379
+#    password: tXBUXtFK6zjrL3vPcyl8NoKgyTPjZ7Ss
+
+#logging.level:
+#  org.hibernate.SQL: debug
+  #org.hibernate.type: trace
